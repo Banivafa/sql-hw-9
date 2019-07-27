@@ -1,0 +1,109 @@
+DROP TABLE IF EXISTS department;
+DROP TABLE IF EXISTS dept_employee;
+ 
+
+create table Department(
+ dept_no character varying(45) primary key not null, 
+ dept_name varchar (45)
+);
+select * from Department;
+
+create table Employee(
+emp_no integer primary key not null,
+birth_date date,
+first_name varchar(45),
+last_name varchar(45),
+gender varchar(20),
+hire_date date
+);	 
+select * from Employee;
+	 
+CREATE TABLE dept_empl  (
+ emp_no integer NOT NULL,
+ dept_no character varying(45) NOT NULL,
+ rom_date timestamp without time zone DEFAULT now() NOT NULL,
+ to_date timestamp without time zone DEFAULT now() NOT NULL
+);
+select * from dept_empl;
+
+
+Create table Salary(
+emp_no integer not null, 
+FOREIGN KEY (emp_no) REFERENCES Employee(emp_no),	
+salary integer,
+from_date date,
+to_date date
+);	
+select * from Salary;
+
+create table Dept_manager(
+dept_no varchar(45), 
+FOREIGN KEY (dept_no) REFERENCES   Department(dept_no),
+emp_no integer,
+FOREIGN KEY (emp_no) REFERENCES  Employee(emp_no),
+from_date date,
+to_date date
+);
+select * from Dept_manager;
+
+create table Titles(
+emp_no integer,
+FOREIGN KEY (emp_no) REFERENCES  Employee(emp_no),
+title varchar(45),
+from_date date,
+to_date date
+);
+select * from Titles;
+
+select e.emp_no, e.last_name, e.first_name, e.gender, s.salary
+from Employee as e
+join Salary as s
+on e.emp_no= s.emp_no;
+
+select *
+from Employee
+where hire_date >= '19860101'
+and hire_date <='19861231';
+
+SELECT d.dept_no, d.dept_name, m.emp_no, 
+  e.last_name, e.first_name, m.from_date, m.to_date
+FROM dept_manager as m
+JOIN Department as d
+ON m.dept_no = d.dept_no
+JOIN Employee as e
+ON m.emp_no = e.emp_no;
+
+select e.emp_no, e.last_name, e.first_name, d.dept_name
+from dept_empl as de
+join Department as d
+on de.dept_no = d.dept_no
+join Employee as e
+on de.emp_no = e.emp_no;
+
+select emp_no, first_name, last_name
+from Employee
+where first_name= 'Hercules'
+and last_name like 'B%';
+
+select e.emp_no, e.last_name, e.first_name, d.dept_name
+from dept_empl as de
+join Department as d
+on de.dept_no = d.dept_no
+join Employee as e
+on de.emp_no = e.emp_no
+WHERE d.dept_name = 'Sales';
+
+select e.emp_no, e.last_name, e.first_name, d.dept_name
+from dept_empl as de
+join Department as d
+on de.dept_no = d.dept_no
+join Employee as e
+on de.emp_no = e.emp_no
+where d.dept_name ='Sales'
+or d.dept_name = 'Development';
+
+select last_name, count(*) as "shared last name"
+from Employee
+group by last_name
+order by "shared last name" desc;
+
